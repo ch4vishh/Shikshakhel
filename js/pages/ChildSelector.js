@@ -6,27 +6,43 @@ const h = React.createElement;
 const AVATARS = ['🧒', '👧', '👦', '👶', '🧒🏽', '👧🏽'];
 
 export function ChildSelector({ navigate, onSelect }) {
-    const [children, setChildren] = React.useState(getChildren());
+    const [children, setChildren] = React.useState(null);
     const [showModal, setShowModal] = React.useState(false);
     const [childName, setChildName] = React.useState('');
     const [childClass, setChildClass] = React.useState('1');
 
-    const handleSelect = (childId) => {
-        setActiveChild(childId);
+    React.useEffect(() => {
+        let mounted = true;
+        getChildren().then(res => {
+            if (mounted) setChildren(res);
+        });
+        return () => { mounted = false; };
+    }, []);
+
+    const handleSelect = async (childId) => {
+        await setActiveChild(childId);
         onSelect();
         navigate('/home');
     };
 
-    const handleAdd = (e) => {
+    const handleAdd = async (e) => {
         e.preventDefault();
-        if (!childName.trim()) return;
+        if (!childName.trim() || !children) return;
         const avatar = AVATARS[children.length % AVATARS.length];
-        const child = addChild({ name: childName.trim(), class: childClass, avatar });
-        setChildren(getChildren());
+        const child = await addChild({ name: childName.trim(), class: childClass, avatar });
+        
+        const updated = await getChildren();
+        setChildren(updated);
         setChildName('');
         setShowModal(false);
-        handleSelect(child.id);
+        await handleSelect(child.id);
     };
+
+    if (children === null) {
+        return h('div', { className: 'empty-state page-no-nav' },
+            h('div', { className: 'spinner', style: { margin: '0 auto' } })
+        );
+    }
 
     return h('div', { className: 'child-selector page-no-nav' },
         h('div', { className: 'child-selector-header' },

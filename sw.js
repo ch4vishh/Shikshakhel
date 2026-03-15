@@ -2,10 +2,11 @@
 // SERVICE WORKER – Offline-first caching
 // ============================================
 
-const CACHE_NAME = 'shikshakhel-v2';
+const CACHE_NAME = 'shikshakhel-v6';
 const ASSETS = [
     '/',
     '/index.html',
+    '/offline.html',
     '/manifest.json',
     '/css/index.css',
     '/css/splash.css',
@@ -25,9 +26,13 @@ const ASSETS = [
     '/js/pages/ResultScreen.js',
     '/js/pages/ParentDashboard.js',
     '/js/pages/SettingsPage.js',
+    '/js/pages/BadgesGallery.js',
+    '/js/pages/PaymentPage.js',
+    '/js/components/InstallPrompt.js',
     '/js/data/questions.js',
     '/js/data/levels.js',
     '/js/utils/storage.js',
+    '/js/utils/speech.js',
     '/icons/favicon.svg',
 ];
 
@@ -71,13 +76,18 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // For app assets, cache-first
+    // For app assets, cache-first, with fallback to offline.html for navigation requests
     event.respondWith(
         caches.match(request).then(cached => {
             return cached || fetch(request).then(response => {
                 const clone = response.clone();
                 caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
                 return response;
+            }).catch(() => {
+                // If both cache and network fail, check if it's a navigation request
+                if (request.mode === 'navigate') {
+                    return caches.match('/offline.html');
+                }
             });
         })
     );

@@ -1,298 +1,250 @@
 /* ========================================
-   HOME SCREEN
+   HOME SCREEN — Polished & Premium
    ======================================== */
 
 .home {
     flex: 1;
     padding: 1rem 1rem 1.5rem;
     overflow-y: auto;
+    background:
+        radial-gradient(ellipse 55% 30% at 30% 0%, rgba(124,58,237,0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 25% at 80% 100%, rgba(245,158,11,0.06) 0%, transparent 70%);
 }
 
-/* Top greeting */
+/* ─── Greeting header ─── */
 .home-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 1.2rem;
-    animation: slideDown 0.4s ease;
+    animation: slideDown 0.35s ease;
 }
 
-.greeting {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-}
+.greeting { display: flex; align-items: center; gap: 0.8rem; }
 
 .greeting-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: var(--radius-full);
-    background: linear-gradient(135deg, var(--primary), var(--accent));
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 46px; height: 46px;
+    border-radius: var(--r-full);
+    background: var(--primary-gradient);
+    display: flex; align-items: center; justify-content: center;
     font-size: 1.5rem;
-    box-shadow: var(--shadow-glow);
+    box-shadow: var(--sh-glow);
+    border: 2px solid rgba(167,139,250,0.3);
 }
 
-.greeting-text h2 {
-    font-size: 1.1rem;
-    font-weight: 700;
-}
-
-.greeting-text p {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-}
+.greeting-text h2 { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.3px; }
+.greeting-text p  { font-size: 0.73rem; color: var(--text-400); font-weight: 500; }
 
 .streak-badge {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: linear-gradient(135deg, #FF6B35, #F59E0B);
-    padding: 0.4rem 0.8rem;
-    border-radius: var(--radius-xl);
-    font-size: 0.85rem;
-    font-weight: 700;
-    box-shadow: var(--shadow-accent);
-    animation: fireFlicker 2s ease-in-out infinite;
+    display: flex; align-items: center; gap: 0.35rem;
+    background: linear-gradient(135deg, #FF6B35, #F59E0B, #FCD34D);
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--r-xl);
+    font-size: 0.85rem; font-weight: 800;
+    color: #1a0800;
+    box-shadow: var(--sh-accent), 0 2px 8px rgba(245,158,11,0.3);
+    animation: fireFlicker 2.5s ease-in-out infinite;
 }
+.streak-icon { font-size: 1rem; }
 
-.streak-icon {
-    font-size: 1.1rem;
-}
-
-/* Daily mission card */
+/* ─── Daily mission ─── */
 .daily-mission {
-    background: linear-gradient(135deg, var(--primary-dark), var(--primary), #8B5CF6);
-    border-radius: var(--radius-xl);
-    padding: 1.4rem;
-    margin-bottom: 1.2rem;
+    background: linear-gradient(135deg, #5B21B6, #7C3AED 50%, #A78BFA);
+    border-radius: var(--r-xl);
+    padding: 1.4rem 1.3rem;
+    margin-bottom: 1.3rem;
     position: relative;
     overflow: hidden;
-    animation: slideUp 0.5s ease;
-    box-shadow: var(--shadow-glow);
+    animation: slideUp 0.45s ease;
+    box-shadow: var(--sh-glow), var(--sh-md);
+    border: 1px solid rgba(167,139,250,0.2);
+}
+
+/* Decorative ring */
+.daily-mission::before {
+    content: '';
+    position: absolute;
+    top: -40%; right: -20%;
+    width: 180px; height: 180px;
+    border: 2px solid rgba(255,255,255,0.06);
+    border-radius: 50%;
+    animation: spinSlow 25s linear infinite;
 }
 
 .daily-mission::after {
     content: '';
     position: absolute;
-    top: -50%;
-    right: -30%;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+    top: -30%; right: -25%;
+    width: 140px; height: 140px;
+    background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
     border-radius: 50%;
 }
 
 .mission-label {
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 0.3rem;
+    font-size: 0.68rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1.8px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 0.35rem;
 }
 
 .mission-title {
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 0.8rem;
+    font-size: 1.35rem; font-weight: 800;
+    margin-bottom: 0.9rem;
+    letter-spacing: -0.3px;
 }
 
-.mission-progress {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-}
+.mission-progress { display: flex; align-items: center; gap: 0.8rem; }
 
 .mission-progress-bar {
-    flex: 1;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    overflow: hidden;
+    flex: 1; height: 7px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 7px; overflow: hidden;
 }
 
 .mission-progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--accent-light), var(--accent));
-    border-radius: 8px;
-    transition: width 0.5s ease;
-    animation: progressBar 1s ease;
+    background: var(--accent-gradient);
+    border-radius: 7px;
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: progressBar 0.8s ease;
+    box-shadow: 0 0 8px rgba(245,158,11,0.4);
 }
 
-.mission-progress-text {
-    font-size: 0.8rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
+.mission-progress-text { font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
 
 .mission-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: inline-flex; align-items: center; gap: 0.5rem;
     margin-top: 1rem;
-    padding: 0.7rem 1.4rem;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: var(--radius-md);
-    color: white;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: background 0.2s, transform 0.2s;
+    padding: 0.65rem 1.3rem;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--r-md);
+    color: #fff; font-size: 0.88rem; font-weight: 700;
+    transition: background 0.2s, transform 0.15s;
+    box-shadow: var(--sh-inset);
 }
+.mission-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.2); }
 
-.mission-btn:active {
-    transform: scale(0.96);
-    background: rgba(255, 255, 255, 0.25);
-}
-
-/* Stats row */
+/* ─── Stats row ─── */
 .stats-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.7rem;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 0.65rem;
     margin-bottom: 1.4rem;
-    animation: slideUp 0.6s ease;
+    animation: slideUp 0.55s ease;
 }
 
 .stat-card {
-    background: var(--glass-bg);
-    backdrop-filter: blur(12px);
+    background: var(--glass);
+    backdrop-filter: blur(14px) saturate(1.3);
+    -webkit-backdrop-filter: blur(14px) saturate(1.3);
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    padding: 1rem 0.6rem;
+    border-radius: var(--r-lg);
+    padding: 0.9rem 0.5rem;
     text-align: center;
+    box-shadow: var(--sh-inset), var(--sh-sm);
+    position: relative;
+    overflow: hidden;
 }
 
-.stat-icon {
-    font-size: 1.4rem;
-    margin-bottom: 0.3rem;
+.stat-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 50%);
+    pointer-events: none;
 }
+
+.stat-icon { font-size: 1.3rem; margin-bottom: 0.25rem; }
 
 .stat-value {
-    font-size: 1.3rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, var(--text-primary), var(--primary-light));
+    font-size: 1.35rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--text-100), var(--primary-light));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-.stat-label {
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    margin-top: 0.1rem;
-}
+.stat-label { font-size: 0.62rem; color: var(--text-500); font-weight: 600; margin-top: 0.1rem; text-transform: uppercase; letter-spacing: 0.5px; }
 
-/* Section title */
+/* ─── Section title ─── */
 .section-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--text-primary);
+    font-size: 0.95rem; font-weight: 700;
+    color: var(--text-200);
     margin-bottom: 0.8rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: flex; align-items: center; gap: 0.45rem;
 }
 
-/* Level map */
+/* ─── Level map ─── */
 .level-map {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    animation: slideUp 0.7s ease;
+    display: flex; flex-direction: column;
+    gap: 0.7rem;
+    animation: slideUp 0.65s ease;
 }
 
 .level-card {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background: var(--glass-bg);
-    backdrop-filter: blur(12px);
+    display: flex; align-items: center; gap: 0.9rem;
+    background: var(--glass);
+    backdrop-filter: blur(14px) saturate(1.3);
+    -webkit-backdrop-filter: blur(14px) saturate(1.3);
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    padding: 1rem;
+    border-radius: var(--r-lg);
+    padding: 0.95rem 1rem;
     cursor: pointer;
-    transition: transform 0.2s, border-color 0.3s, box-shadow 0.3s;
+    transition: transform 0.2s, border-color 0.25s, box-shadow 0.25s;
+    box-shadow: var(--sh-inset), var(--sh-sm);
+    position: relative;
+    overflow: hidden;
 }
 
-.level-card:active {
-    transform: scale(0.98);
+.level-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.025) 0%, transparent 40%);
+    pointer-events: none;
 }
 
-.level-card.unlocked:hover {
+.level-card:active { transform: scale(0.98); }
+
+.level-card.unlocked:active {
     border-color: var(--primary-light);
-    box-shadow: var(--shadow-glow);
+    box-shadow: var(--sh-glow);
 }
 
-.level-card.locked {
-    opacity: 0.45;
-    cursor: not-allowed;
-}
+.level-card.locked { opacity: 0.35; cursor: not-allowed; }
 
 .level-card.completed {
-    border-color: var(--success);
-    box-shadow: 0 0 12px var(--success-glow);
+    border-color: rgba(16,185,129,0.35);
+    box-shadow: 0 0 14px var(--success-glow), var(--sh-inset);
 }
 
 .level-number {
-    width: 44px;
-    height: 44px;
-    border-radius: var(--radius-full);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    font-weight: 800;
+    width: 42px; height: 42px;
+    border-radius: var(--r-full);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.05rem; font-weight: 800;
     flex-shrink: 0;
 }
 
 .level-card.unlocked .level-number {
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    box-shadow: var(--shadow-glow);
+    background: var(--primary-gradient);
+    box-shadow: var(--sh-glow);
+    color: #fff;
 }
-
-.level-card.locked .level-number {
-    background: var(--bg-surface);
-    color: var(--text-muted);
-}
-
+.level-card.locked .level-number { background: var(--bg-3); color: var(--text-500); }
 .level-card.completed .level-number {
     background: linear-gradient(135deg, var(--success), var(--success-light));
+    color: #fff;
 }
 
-.level-info {
-    flex: 1;
-    min-width: 0;
-}
-
+.level-info { flex: 1; min-width: 0; }
 .level-name {
-    font-size: 0.95rem;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 0.92rem; font-weight: 700;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.level-desc { font-size: 0.7rem; color: var(--text-400); margin-top: 0.12rem; font-weight: 500; }
 
-.level-desc {
-    font-size: 0.72rem;
-    color: var(--text-secondary);
-    margin-top: 0.15rem;
-}
+.level-stars { display: flex; gap: 0.15rem; font-size: 0.85rem; }
+.level-stars .earned { color: var(--accent); filter: drop-shadow(0 0 4px rgba(245,158,11,0.4)); }
+.level-stars .empty  { color: var(--text-500); opacity: 0.25; }
 
-.level-stars {
-    display: flex;
-    gap: 0.2rem;
-    font-size: 0.9rem;
-}
-
-.level-stars .earned { color: var(--accent); }
-.level-stars .empty { color: var(--text-muted); opacity: 0.3; }
-
-.level-lock-icon {
-    font-size: 1.2rem;
-    color: var(--text-muted);
-}
+.level-lock-icon { font-size: 1.1rem; color: var(--text-500); }

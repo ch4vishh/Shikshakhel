@@ -12,7 +12,10 @@ import { GameScreen } from './pages/GameScreen.js';
 import { ResultScreen } from './pages/ResultScreen.js';
 import { ParentDashboard } from './pages/ParentDashboard.js';
 import { SettingsPage } from './pages/SettingsPage.js';
+import { BadgesGallery } from './pages/BadgesGallery.js';
+import { PaymentPage } from './pages/PaymentPage.js';
 import { BottomNav } from './components/BottomNav.js';
+import { InstallPrompt } from './components/InstallPrompt.js';
 
 const h = React.createElement;
 
@@ -85,12 +88,25 @@ function useHashRouter() {
 function App() {
     const { route, navigate, params } = useHashRouter();
     const [refreshKey, setRefreshKey] = React.useState(0);
-    const refresh = () => setRefreshKey(k => k + 1);
+    
+    // Async state tracking
+    const [isLoaded, setIsLoaded] = React.useState(false);
+    const [activeChildId, setActiveChildIdState] = React.useState(null);
 
-    // Determine which page to show
-    const parent = getParent();
-    const children = getChildren();
-    const activeChildId = getActiveChild();
+    React.useEffect(() => {
+        let mounted = true;
+        async function loadState() {
+            const childId = await getActiveChild();
+            if (mounted) {
+                setActiveChildIdState(childId);
+                setIsLoaded(true);
+            }
+        }
+        loadState();
+        return () => { mounted = false; };
+    }, [refreshKey]);
+
+    const refresh = () => setRefreshKey(k => k + 1);
 
     // Pages that don't show bottom nav
     const showNav = !(
@@ -106,7 +122,11 @@ function App() {
     const levelId = levelMatch ? parseInt(levelMatch[1]) : null;
 
     let page;
-    if (route === '/') {
+    
+    if (!isLoaded) {
+        // Render a simple loading splash while localforage loads DB
+        page = h(SplashScreen, { navigate, isLoading: true });
+    } else if (route === '/') {
         page = h(SplashScreen, { navigate });
     } else if (route === '/login') {
         page = h(LoginScreen, { navigate, onLogin: refresh });
@@ -120,6 +140,10 @@ function App() {
         page = h(ResultScreen, { navigate, childId: activeChildId, ...params });
     } else if (route === '/parent') {
         page = h(ParentDashboard, { key: refreshKey, navigate });
+    } else if (route === '/badges') {
+        page = h(BadgesGallery, { navigate, childId: activeChildId });
+    } else if (route === '/payment') {
+        page = h(PaymentPage, { navigate });
     } else if (route === '/settings') {
         page = h(SettingsPage, { navigate, onClear: refresh });
     } else {
@@ -130,7 +154,8 @@ function App() {
         h(ErrorBoundary, { key: route },
             page
         ),
-        showNav && h(BottomNav, { route, navigate })
+        (showNav && isLoaded) && h(BottomNav, { route, navigate }),
+        isLoaded && h(InstallPrompt)
     );
 }
 

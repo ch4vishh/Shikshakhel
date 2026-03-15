@@ -7,21 +7,32 @@ export function ResultScreen({ navigate, childId, levelId, score, totalQ, stars,
     const [result, setResult] = React.useState(null);
 
     React.useEffect(() => {
-        if (childId && levelId && typeof stars === 'number') {
-            const res = completeLevel(childId, levelId, stars, timeSec || 0);
-            setResult(res);
+        let mounted = true;
+        async function load() {
+            if (childId && levelId && typeof stars === 'number') {
+                const res = await completeLevel(childId, levelId, stars, timeSec || 0);
+                if (mounted) setResult(res);
+            }
         }
+        load();
+        return () => { mounted = false; };
     }, []);
+
+    if (!result) {
+        return h('div', { className: 'page', style: { display: 'flex', alignItems: 'center', justifyContent: 'center' } },
+            h('div', { className: 'spinner' })
+        );
+    }
 
     const pct = totalQ > 0 ? Math.round((score / totalQ) * 100) : 0;
     const title = stars >= 3 ? 'परफेक्ट! 🏆' : stars >= 2 ? 'बहुत अच्छे! 🎉' : stars >= 1 ? 'अच्छा! 👍' : 'कोशिश जारी रखो! 💪';
 
-    const newBadge = result?.newBadge;
+    const newBadge = result.newBadge;
     const badgeInfo = newBadge && BADGES[newBadge];
 
     const xpGained = (stars || 0) * 10 + 5;
-    const totalXP = result?.progress?.totalXP || xpGained;
-    const xpForNext = Math.ceil(totalXP / 100) * 100;
+    const totalXP = result.progress.totalXP;
+    const xpForNext = Math.ceil((totalXP || 1) / 100) * 100;
     const xpPercent = ((totalXP % 100) / 100) * 100;
 
     return h('div', { className: 'result page-no-nav' },
@@ -56,7 +67,7 @@ export function ResultScreen({ navigate, childId, levelId, score, totalQ, stars,
                 h('div', { className: 'result-stat-label' }, 'समय'),
             ),
             h('div', { className: 'result-stat' },
-                h('div', { className: 'result-stat-value' }, '🔥 ' + (result?.progress?.streak || 0)),
+                h('div', { className: 'result-stat-value' }, '🔥 ' + (result.progress.streak || 0)),
                 h('div', { className: 'result-stat-label' }, 'स्ट्रीक'),
             )
         ),

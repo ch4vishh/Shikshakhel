@@ -1,5 +1,5 @@
 // ============================================
-// STORAGE.JS – localStorage helpers
+// STORAGE.JS – localforage (IndexedDB) helpers
 // ============================================
 
 const KEYS = {
@@ -11,41 +11,48 @@ const KEYS = {
 };
 
 // --- Helpers ---
-function get(key) {
+async function get(key, defaultValue = null) {
     try {
-        const val = localStorage.getItem(key);
-        return val ? JSON.parse(val) : null;
-    } catch { return null; }
+        const val = await localforage.getItem(key);
+        return val !== null ? val : defaultValue;
+    } catch (e) {
+        console.error("localforage get error:", e);
+        return defaultValue;
+    }
 }
 
-function set(key, value) {
-    try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+async function set(key, value) {
+    try {
+        await localforage.setItem(key, value);
+    } catch (e) {
+        console.error("localforage set error:", e);
+    }
 }
 
 // --- Parent ---
-export function getParent() { return get(KEYS.PARENT); }
-export function saveParent(data) { set(KEYS.PARENT, data); }
+export async function getParent() { return get(KEYS.PARENT); }
+export async function saveParent(data) { await set(KEYS.PARENT, data); }
 
 // --- Children ---
-export function getChildren() { return get(KEYS.CHILDREN) || []; }
-export function saveChildren(children) { set(KEYS.CHILDREN, children); }
+export async function getChildren() { return get(KEYS.CHILDREN, []); }
+export async function saveChildren(children) { await set(KEYS.CHILDREN, children); }
 
-export function addChild(child) {
-    const children = getChildren();
+export async function addChild(child) {
+    const children = await getChildren();
     child.id = Date.now().toString(36);
     children.push(child);
-    saveChildren(children);
+    await saveChildren(children);
     return child;
 }
 
 // --- Active Child ---
-export function getActiveChild() { return get(KEYS.ACTIVE_CHILD); }
-export function setActiveChild(childId) { set(KEYS.ACTIVE_CHILD, childId); }
+export async function getActiveChild() { return get(KEYS.ACTIVE_CHILD); }
+export async function setActiveChild(childId) { await set(KEYS.ACTIVE_CHILD, childId); }
 
 // --- Progress (per child) ---
 function progressKey(childId) { return KEYS.PROGRESS + '_' + childId; }
 
-export function getProgress(childId) {
+export async function getProgress(childId) {
     const defaultProgress = {
         completedLevels: {},
         totalStars: 0,
@@ -56,15 +63,15 @@ export function getProgress(childId) {
         totalTimePlayed: 0,
         dailyCompleted: 0,
     };
-    return get(progressKey(childId)) || defaultProgress;
+    return get(progressKey(childId), defaultProgress);
 }
 
-export function saveProgress(childId, progress) {
-    set(progressKey(childId), progress);
+export async function saveProgress(childId, progress) {
+    await set(progressKey(childId), progress);
 }
 
-export function completeLevel(childId, levelId, stars, timeSec) {
-    const progress = getProgress(childId);
+export async function completeLevel(childId, levelId, stars, timeSec) {
+    const progress = await getProgress(childId);
     const prevStars = progress.completedLevels[levelId]?.stars || 0;
 
     progress.completedLevels[levelId] = {
@@ -93,6 +100,8 @@ export function completeLevel(childId, levelId, stars, timeSec) {
 
     // Badge logic
     const badges = progress.badges;
+    const existingBadgesLength = badges.length;
+
     if (progress.streak >= 3 && !badges.includes('streak_3')) badges.push('streak_3');
     if (progress.streak >= 7 && !badges.includes('streak_7')) badges.push('streak_7');
     if (progress.totalStars >= 10 && !badges.includes('star_10')) badges.push('star_10');
@@ -101,29 +110,30 @@ export function completeLevel(childId, levelId, stars, timeSec) {
     if (Object.keys(progress.completedLevels).length >= 15 && !badges.includes('level_all')) badges.push('level_all');
 
     // Get newly earned badge
-    const existingBadges = getProgress(childId).badges;
-    const newBadge = badges.find(b => !existingBadges.includes(b)) || null;
+    const newBadge = badges.length > existingBadgesLength ? badges[badges.length - 1] : null;
 
-    saveProgress(childId, progress);
+    await saveProgress(childId, progress);
     return { progress, newBadge, addedStars };
 }
 
 // --- Settings ---
-export function getSettings() {
-    return get(KEYS.SETTINGS) || { soundOn: true, language: 'hi' };
+export async function getSettings() {
+    return get(KEYS.SETTINGS, { soundOn: true, language: 'hi' });
 }
 
-export function saveSettings(settings) { set(KEYS.SETTINGS, settings); }
+export async function saveSettings(settings) { await set(KEYS.SETTINGS, settings); }
 
 // --- Clear all ---
-export function clearAllData() {
-    Object.values(KEYS).forEach(k => localStorage.removeItem(k));
-    // Also clear child progress keys
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith(KEYS.PROGRESS)) {
-            localStorage.removeItem(key);
+export async function clearAllData() {
+    try {
+        const keys = await localforage.keys();
+        for (const key of keys) {
+            if (Object.values(KEYS).includes(key) || key.startsWith(KEYS.PROGRESS)) {
+                await localforage.removeItem(key);
+            }
         }
+    } catch (e) {
+        console.error("Error clearing localforage:", e);
     }
 }
 

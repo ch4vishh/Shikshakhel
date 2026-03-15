@@ -14,10 +14,37 @@ const LEADERBOARD = [
 ];
 
 export function ParentDashboard({ navigate }) {
-    const children = getChildren();
-    const [selectedChild, setSelectedChild] = React.useState(getActiveChild() || (children[0] && children[0].id));
-    const child = children.find(c => c.id === selectedChild) || children[0];
-    const progress = child ? getProgress(child.id) : null;
+    const [data, setData] = React.useState(null);
+    const [selectedChild, setSelectedChild] = React.useState(null);
+
+    React.useEffect(() => {
+        let mounted = true;
+        async function load() {
+            const children = await getChildren();
+            let active = selectedChild;
+            if (!active) {
+                active = await getActiveChild() || (children[0] ? children[0].id : null);
+                if (mounted) setSelectedChild(active);
+            }
+            
+            if (active) {
+                const progress = await getProgress(active);
+                if (mounted) setData({ children, child: children.find(c => c.id === active), progress });
+            } else {
+                if (mounted) setData({ children: [], child: null, progress: null });
+            }
+        }
+        load();
+        return () => { mounted = false; };
+    }, [selectedChild]);
+
+    if (!data) {
+        return h('div', { className: 'page', style: { display: 'flex', alignItems: 'center', justifyContent: 'center' } },
+            h('div', { className: 'spinner' })
+        );
+    }
+
+    const { children, child, progress } = data;
 
     if (!child || !progress) {
         return h('div', { className: 'parent-dash page' },

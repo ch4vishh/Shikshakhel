@@ -3,6 +3,7 @@ import React from 'react';
 import { getProgress } from '../utils/storage.js';
 import { levels } from '../data/levels.js';
 import { questions } from '../data/questions.js';
+import { speakHindi } from '../utils/speech.js';
 const h = React.createElement;
 
 const CHARACTERS = ['🦊', '🐼', '🦁', '🐸', '🐵', '🐰'];
@@ -28,8 +29,9 @@ export function GameScreen({ navigate, levelId, childId }) {
     React.useEffect(() => {
         if (currentQ) {
             setShuffledOptions([...currentQ.options].sort(() => Math.random() - 0.5));
+            speakHindi(currentQ.hindi || currentQ.text);
         }
-    }, [currentIdx]);
+    }, [currentIdx, currentQ]);
 
     if (!level || !currentQ) {
         return h('div', { className: 'game page-no-nav', style: { alignItems: 'center', justifyContent: 'center' } },
@@ -45,8 +47,10 @@ export function GameScreen({ navigate, levelId, childId }) {
         if (opt === currentQ.answer) {
             setFeedback('correct');
             setScore(s => s + 1);
+            speakHindi(ENCOURAGE[Math.floor(Math.random() * ENCOURAGE.length)]);
         } else {
             setFeedback('wrong');
+            speakHindi(WRONG_MSG[Math.floor(Math.random() * WRONG_MSG.length)]);
         }
 
         // Move to next after delay
@@ -95,16 +99,42 @@ export function GameScreen({ navigate, levelId, childId }) {
             )
         ),
 
-        // Question
+        // Question Area
         h('div', { className: 'game-question' },
+            h('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '1rem' } },
+                h('button', { 
+                    onClick: () => speakHindi(currentQ.hindi || currentQ.text),
+                    style: { background: 'var(--glass)', border: '1px solid var(--glass-border)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', cursor: 'pointer', boxShadow: 'var(--sh-sm)' }
+                }, '🔊')
+            ),
+
+            // Number Bonds Visual UI
+            currentQ.type === 'number_bonds' ? h('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', fontSize: '2rem', fontWeight: 800, margin: '1rem 0' } },
+                ...currentQ.text.split(' ').map((part, idx) => {
+                    if (part === '?') return h('div', { key: idx, style: { background: 'rgba(255,255,255,0.1)', border: '2px dashed var(--accent)', borderRadius: 'var(--r-md)', width: '60px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)' } }, '?');
+                    if (part === '+' || part === '=') return h('span', { key: idx, style: { color: 'var(--text-300)' } }, part);
+                    return h('div', { key: idx, style: { background: 'var(--glass)', border: '1px solid var(--glass-border)', borderRadius: 'var(--r-md)', width: '60px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--sh-inset)' } }, part);
+                })
+            ) : 
+
+            // Place Value Visual UI
+            currentQ.type === 'place_value' && currentQ.text.includes(':') ? h('div', null,
+                h('h2', { className: 'question-text', style: { fontSize: '1.5rem', marginBottom: '1rem' } }, currentQ.hindi.split('में')[0] + ' में:'),
+                h('div', { style: { display: 'flex', justifyContent: 'center', gap: '0.5rem', fontSize: '3rem', fontWeight: 800, letterSpacing: '4px', background: 'var(--glass)', padding: '1rem 2rem', borderRadius: 'var(--r-lg)', display: 'inline-block' } }, 
+                    currentQ.text.split(': ')[1]
+                )
+            ) :
+
+            // Default Text UI
             h('h2', { className: 'question-text' }, currentQ.hindi || currentQ.text),
-            h('p', { className: 'question-hint' },
-                currentQ.type === 'addition' ? 'जोड़ो' :
-                currentQ.type === 'subtraction' ? 'घटाओ' :
-                currentQ.type === 'number_bonds' ? 'खाली जगह भरो' :
-                currentQ.type === 'place_value' ? 'स्थानीय मान' :
-                currentQ.type === 'comparison' ? 'तुलना करो' :
-                currentQ.type === 'counting' ? 'गिनती पैटर्न' : ''
+
+            h('p', { className: 'question-hint', style: { marginTop: '1rem', color: 'var(--text-400)' } },
+                currentQ.type === 'addition' ? 'जोड़ो (Add)' :
+                currentQ.type === 'subtraction' ? 'घटाओ (Subtract)' :
+                currentQ.type === 'number_bonds' ? 'खाली बॉक्स भरो (Fill the box)' :
+                currentQ.type === 'place_value' ? 'सही अंक पहचानो (Identify the digit)' :
+                currentQ.type === 'comparison' ? 'तुलना करो (Compare)' :
+                currentQ.type === 'counting' ? 'पैटर्न पूरा करो (Complete pattern)' : ''
             )
         ),
 

@@ -1,13 +1,32 @@
 // HomeScreen Component
 import React from 'react';
-import { getProgress, getChildren, getActiveChild, BADGES } from '../utils/storage.js';
-import { levels, totalLevels, getLevelStatus, getStarsForLevel } from '../data/levels.js';
+import { getProgress, getChildren, BADGES } from '../utils/storage.js';
+import { levels, getLevelStatus, getStarsForLevel } from '../data/levels.js';
 const h = React.createElement;
 
 export function HomeScreen({ navigate, childId }) {
-    const progress = getProgress(childId);
-    const children = getChildren();
-    const child = children.find(c => c.id === childId) || { name: 'बच्चा', avatar: '🧒' };
+    const [data, setData] = React.useState(null);
+
+    React.useEffect(() => {
+        let mounted = true;
+        async function load() {
+            if (!childId) return;
+            const progress = await getProgress(childId);
+            const children = await getChildren();
+            const child = children.find(c => c.id === childId) || { name: 'बच्चा', avatar: '🧒' };
+            if (mounted) setData({ progress, child });
+        }
+        load();
+        return () => { mounted = false; };
+    }, [childId]);
+
+    if (!data) {
+        return h('div', { className: 'page', style: { display: 'flex', alignItems: 'center', justifyContent: 'center' } },
+            h('div', { className: 'spinner' })
+        );
+    }
+
+    const { progress, child } = data;
     const completedCount = Object.keys(progress.completedLevels).length;
 
     // Find next unlocked level to play
@@ -68,25 +87,32 @@ export function HomeScreen({ navigate, childId }) {
         ),
 
         // Badges showcase (if any)
-        progress.badges.length > 0 && h('div', { style: { marginBottom: '1.2rem' } },
-            h('div', { className: 'section-title' }, '🏆 मेरे बैज'),
+        progress.badges.length > 0 && h('div', { 
+            style: { marginBottom: '1.2rem', cursor: 'pointer' },
+            onClick: () => navigate('/badges')
+        },
+            h('div', { className: 'section-title', style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }, 
+                h('span', null, '🏆 मेरे बैज'),
+                h('span', { style: { fontSize: '0.8rem', color: 'var(--primary-light)', fontWeight: 'bold' } }, 'सभी देखें →')
+            ),
             h('div', { style: { display: 'flex', gap: '0.5rem', flexWrap: 'wrap' } },
                 progress.badges.map(bid =>
                     BADGES[bid] && h('div', {
                         key: bid,
                         style: {
-                            background: 'var(--glass-bg)',
+                            background: 'var(--glass)',
                             border: '1px solid var(--glass-border)',
-                            borderRadius: 'var(--radius-md)',
+                            borderRadius: 'var(--r-md)',
                             padding: '0.5rem 0.8rem',
                             fontSize: '0.78rem',
                             display: 'flex',
                             alignItems: 'center',
                             gap: '0.3rem',
+                            boxShadow: 'var(--sh-sm)'
                         }
                     },
                         h('span', null, BADGES[bid].icon),
-                        h('span', null, BADGES[bid].name)
+                        h('span', { style: { fontWeight: 600 } }, BADGES[bid].name)
                     )
                 )
             )

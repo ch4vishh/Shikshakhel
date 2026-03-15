@@ -4,18 +4,36 @@ import { getSettings, saveSettings, clearAllData, getParent } from '../utils/sto
 const h = React.createElement;
 
 export function SettingsPage({ navigate, onClear }) {
-    const [settings, setSettings] = React.useState(getSettings());
-    const parent = getParent();
+    const [data, setData] = React.useState(null);
 
-    const toggleSound = () => {
+    React.useEffect(() => {
+        let mounted = true;
+        async function load() {
+            const settings = await getSettings();
+            const parent = await getParent();
+            if (mounted) setData({ settings, parent });
+        }
+        load();
+        return () => { mounted = false; };
+    }, []);
+
+    if (!data) {
+        return h('div', { className: 'page', style: { display: 'flex', alignItems: 'center', justifyContent: 'center' } },
+            h('div', { className: 'spinner' })
+        );
+    }
+
+    const { settings, parent } = data;
+
+    const toggleSound = async () => {
         const updated = { ...settings, soundOn: !settings.soundOn };
-        setSettings(updated);
-        saveSettings(updated);
+        setData({ settings: updated, parent });
+        await saveSettings(updated);
     };
 
-    const handleClear = () => {
+    const handleClear = async () => {
         if (confirm('क्या आप सारा डेटा मिटाना चाहते हैं? यह वापस नहीं आयेगा!')) {
-            clearAllData();
+            await clearAllData();
             onClear();
             navigate('/login');
         }
@@ -62,6 +80,28 @@ export function SettingsPage({ navigate, onClear }) {
                     )
                 ),
                 h('span', { style: { fontSize: '0.8rem', color: 'var(--text-muted)' } }, 'जल्द आ रहा है')
+            )
+        ),
+
+        // Premium Plan
+        h('div', { className: 'settings-group' },
+            h('div', { 
+                className: 'settings-item', 
+                style: { cursor: 'pointer' },
+                onClick: () => navigate('/payment')
+            },
+                h('div', { className: 'settings-item-left' },
+                    h('span', { className: 'settings-icon' }, '💎'),
+                    h('div', null,
+                        h('div', { className: 'settings-label' }, 'शिक्षाखेल प्रो'),
+                        h('div', { className: 'settings-sublabel', style: { color: 'var(--accent)' } }, 'प्रीमियम अनलॉक करें')
+                    )
+                ),
+                h('button', {
+                    className: 'btn-secondary',
+                    style: { flex: 'none', padding: '0.4rem 0.8rem', fontSize: '0.75rem', background: 'var(--accent)', color: '#000', border: 'none' },
+                    onClick: (e) => { e.stopPropagation(); navigate('/payment'); },
+                }, 'अपग्रेड →')
             )
         ),
 
