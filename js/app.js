@@ -16,10 +16,54 @@ import { BottomNav } from './components/BottomNav.js';
 
 const h = React.createElement;
 
+// ---- Error Boundary ----
+class ErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+    }
+    static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+    }
+    componentDidCatch(error, info) {
+        console.error('Shikshakhel Error:', error, info);
+    }
+    render() {
+        if (this.state.hasError) {
+            return h('div', {
+                style: {
+                    flex: 1, display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center',
+                    padding: '2rem', textAlign: 'center',
+                    background: '#0F0A1E', color: '#F8F5FF',
+                    fontFamily: "'Baloo 2', sans-serif",
+                }
+            },
+                h('div', { style: { fontSize: '3rem', marginBottom: '1rem' } }, '😵'),
+                h('h2', { style: { marginBottom: '0.5rem' } }, 'कुछ गड़बड़ हो गई!'),
+                h('p', { style: { fontSize: '0.85rem', color: '#B8A9D4', marginBottom: '1rem' } },
+                    String(this.state.error)),
+                h('button', {
+                    onClick: () => {
+                        this.setState({ hasError: false, error: null });
+                        window.location.hash = '/home';
+                    },
+                    style: {
+                        padding: '0.8rem 1.5rem', background: '#6C3CE1',
+                        border: 'none', borderRadius: '12px', color: 'white',
+                        fontSize: '1rem', fontWeight: 700, cursor: 'pointer',
+                    }
+                }, '🏠 होम जाओ')
+            );
+        }
+        return this.props.children;
+    }
+}
+
 // Simple hash-based router
 function useHashRouter() {
     const [route, setRouteState] = React.useState(window.location.hash.slice(1) || '/');
-    const [params, setParams] = React.useState({});
+    const paramsRef = React.useRef({});
 
     React.useEffect(() => {
         const onHash = () => {
@@ -31,11 +75,11 @@ function useHashRouter() {
     }, []);
 
     const navigate = React.useCallback((path, navParams = {}) => {
-        setParams(navParams);
+        paramsRef.current = navParams;
         window.location.hash = path;
     }, []);
 
-    return { route, navigate, params };
+    return { route, navigate, params: paramsRef.current };
 }
 
 function App() {
@@ -49,50 +93,43 @@ function App() {
     const activeChildId = getActiveChild();
 
     // Pages that don't show bottom nav
-    const noNavPages = ['/', '/login', '/select-child', '/game', '/result'];
-    const routeBase = route.split('/').slice(0, 2).join('/');
-    const showNav = !noNavPages.some(p => {
-        if (p === '/game') return route.startsWith('/game');
-        if (p === '/result') return route.startsWith('/result');
-        return route === p;
-    });
+    const showNav = !(
+        route === '/' ||
+        route === '/login' ||
+        route === '/select-child' ||
+        route.startsWith('/game') ||
+        route === '/result'
+    );
 
     // Extract level ID from /game/3 etc
     const levelMatch = route.match(/^\/game\/(\d+)$/);
     const levelId = levelMatch ? parseInt(levelMatch[1]) : null;
 
     let page;
-    switch (true) {
-        case route === '/':
-            page = h(SplashScreen, { navigate });
-            break;
-        case route === '/login':
-            page = h(LoginScreen, { navigate, onLogin: refresh });
-            break;
-        case route === '/select-child':
-            page = h(ChildSelector, { navigate, onSelect: refresh });
-            break;
-        case route === '/home':
-            page = h(HomeScreen, { key: refreshKey, navigate, childId: activeChildId });
-            break;
-        case route.startsWith('/game/') && levelId:
-            page = h(GameScreen, { key: 'game-' + levelId, navigate, levelId, childId: activeChildId });
-            break;
-        case route === '/result':
-            page = h(ResultScreen, { navigate, childId: activeChildId, ...params });
-            break;
-        case route === '/parent':
-            page = h(ParentDashboard, { key: refreshKey, navigate });
-            break;
-        case route === '/settings':
-            page = h(SettingsPage, { navigate, onClear: refresh });
-            break;
-        default:
-            page = h(SplashScreen, { navigate });
+    if (route === '/') {
+        page = h(SplashScreen, { navigate });
+    } else if (route === '/login') {
+        page = h(LoginScreen, { navigate, onLogin: refresh });
+    } else if (route === '/select-child') {
+        page = h(ChildSelector, { navigate, onSelect: refresh });
+    } else if (route === '/home') {
+        page = h(HomeScreen, { key: refreshKey, navigate, childId: activeChildId });
+    } else if (levelId !== null) {
+        page = h(GameScreen, { key: 'game-' + levelId, navigate, levelId, childId: activeChildId });
+    } else if (route === '/result') {
+        page = h(ResultScreen, { navigate, childId: activeChildId, ...params });
+    } else if (route === '/parent') {
+        page = h(ParentDashboard, { key: refreshKey, navigate });
+    } else if (route === '/settings') {
+        page = h(SettingsPage, { navigate, onClear: refresh });
+    } else {
+        page = h(SplashScreen, { navigate });
     }
 
     return h('div', { id: 'app-shell', style: { display: 'flex', flexDirection: 'column', minHeight: '100vh' } },
-        page,
+        h(ErrorBoundary, { key: route },
+            page
+        ),
         showNav && h(BottomNav, { route, navigate })
     );
 }

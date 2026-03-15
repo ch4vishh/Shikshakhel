@@ -2,7 +2,7 @@
 // SERVICE WORKER – Offline-first caching
 // ============================================
 
-const CACHE_NAME = 'shikshakhel-v1';
+const CACHE_NAME = 'shikshakhel-v2';
 const ASSETS = [
     '/',
     '/index.html',
