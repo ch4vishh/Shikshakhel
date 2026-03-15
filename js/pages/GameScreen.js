@@ -19,6 +19,9 @@ export function GameScreen({ navigate, levelId, childId }) {
     const [score, setScore] = React.useState(0);
     const [selected, setSelected] = React.useState(null);
     const [feedback, setFeedback] = React.useState(null); // 'correct' | 'wrong'
+    
+    // For Place Value tap-to-place mechanic
+    const [slottedAnswer, setSlottedAnswer] = React.useState(null);
     const [startTime] = React.useState(Date.now());
     const [character] = React.useState(CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)]);
     const [shuffledOptions, setShuffledOptions] = React.useState([]);
@@ -58,6 +61,7 @@ export function GameScreen({ navigate, levelId, childId }) {
             if (currentIdx + 1 < totalQ) {
                 setCurrentIdx(i => i + 1);
                 setSelected(null);
+                setSlottedAnswer(null);
                 setFeedback(null);
             } else {
                 // Game finished
@@ -125,6 +129,25 @@ export function GameScreen({ navigate, levelId, childId }) {
                 )
             ) :
 
+            // EVS Image Grid Visual UI
+            currentQ.type === 'evs_picture' ? h('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' } },
+                shuffledOptions.map((opt, idx) => {
+                    let cls = 'option-btn', bg = 'var(--glass)';
+                    if (selected !== null) {
+                        if (opt === currentQ.answer) { cls += ' correct'; bg = '#10B981'; }
+                        else if (opt === selected) { cls += ' wrong'; bg = '#EF4444'; }
+                        else cls += ' disabled';
+                    }
+                    return h('button', {
+                        key: idx,
+                        className: cls,
+                        style: { height: '120px', fontSize: '4rem', background: bg, border: '2px solid var(--glass-border)', borderRadius: 'var(--r-lg)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s' },
+                        onClick: () => handleAnswer(opt),
+                        disabled: selected !== null,
+                    }, opt);
+                })
+            ) :
+
             // Default Text UI
             h('h2', { className: 'question-text' }, currentQ.hindi || currentQ.text),
 
@@ -132,26 +155,51 @@ export function GameScreen({ navigate, levelId, childId }) {
                 currentQ.type === 'addition' ? 'जोड़ो (Add)' :
                 currentQ.type === 'subtraction' ? 'घटाओ (Subtract)' :
                 currentQ.type === 'number_bonds' ? 'खाली बॉक्स भरो (Fill the box)' :
-                currentQ.type === 'place_value' ? 'सही अंक पहचानो (Identify the digit)' :
+                currentQ.type === 'place_value' ? 'सही अंक बॉक्स में रखो (Place the digit)' :
                 currentQ.type === 'comparison' ? 'तुलना करो (Compare)' :
-                currentQ.type === 'counting' ? 'पैटर्न पूरा करो (Complete pattern)' : ''
+                currentQ.type === 'counting' ? 'पैटर्न पूरा करो (Complete pattern)' :
+                currentQ.type === 'evs_picture' ? 'सही चित्र पहचानो (Tap the picture)' : ''
+            ),
+
+            // Drop Slot for Place Value (renders below the hint)
+            currentQ.type === 'place_value' && h('div', { className: 'place-value-slot-container', style: { margin: '1.5rem auto', padding: '1.5rem', background: 'rgba(0,0,0,0.2)', borderRadius: 'var(--r-lg)', border: '2px dashed var(--glass-border)', maxWidth: '200px', textAlign: 'center' } },
+                h('div', { style: { fontSize: '0.85rem', color: 'var(--text-400)', marginBottom: '0.5rem' } }, 'उत्तर यहाँ रखें'),
+                h('div', { 
+                    className: slottedAnswer !== null ? (selected ? (slottedAnswer === currentQ.answer ? 'correct-bounce' : 'wrong-shake') : 'pop-in') : '',
+                    style: { width: '80px', height: '80px', margin: '0 auto', background: slottedAnswer !== null ? 'var(--primary)' : 'rgba(255,255,255,0.05)', border: slottedAnswer !== null ? 'none' : '2px dashed var(--text-400)', borderRadius: 'var(--r-md)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', fontWeight: 'bold', color: '#fff', cursor: selected === null ? 'pointer' : 'default', transition: 'all 0.3s' },
+                    onClick: () => { if(selected === null) setSlottedAnswer(null); }
+                }, slottedAnswer !== null ? slottedAnswer : '')
             )
         ),
 
-        // Options
-        h('div', { className: 'options-grid' },
+        // Options (hide for EVS because they are already rendered in the grid)
+        currentQ.type !== 'evs_picture' && h('div', { className: 'options-grid' },
             shuffledOptions.map((opt, idx) => {
                 let cls = 'option-btn';
+                
+                // For place value, we disable the option if it's currently slotted
+                let isSlotted = currentQ.type === 'place_value' && slottedAnswer === opt;
+                if (isSlotted) cls += ' disabled';
+
                 if (selected !== null) {
                     if (opt === currentQ.answer) cls += ' correct';
-                    else if (opt === selected) cls += ' wrong';
+                    else if (opt === selected || isSlotted) cls += ' wrong';
                     else cls += ' disabled';
                 }
                 return h('button', {
                     key: idx,
                     className: cls,
-                    onClick: () => handleAnswer(opt),
-                    disabled: selected !== null,
+                    style: { opacity: isSlotted ? 0.3 : 1, transform: isSlotted ? 'scale(0.9)' : 'none' },
+                    onClick: () => {
+                        if (currentQ.type === 'place_value') {
+                            setSlottedAnswer(opt);
+                            // Auto-submit when placed
+                            handleAnswer(opt);
+                        } else {
+                            handleAnswer(opt);
+                        }
+                    },
+                    disabled: selected !== null || isSlotted,
                 }, opt);
             })
         ),

@@ -69,6 +69,13 @@ export const questions = [
     { id: 53, type: 'counting', text: 'अगला नंबर: 3, 6, 9, ?', hindi: 'अगला नंबर: 3, 6, 9, ?', options: [11, 15, 12, 10], answer: 12, difficulty: 2 },
     { id: 54, type: 'counting', text: 'पीछे गिनो: 10, 8, 6, ?', hindi: 'पीछे गिनो: 10, 8, 6, ?', options: [5, 3, 4, 2], answer: 4, difficulty: 2 },
     { id: 55, type: 'counting', text: 'अगला नंबर: 1, 4, 7, ?', hindi: 'अगला नंबर: 1, 4, 7, ?', options: [8, 11, 10, 9], answer: 10, difficulty: 3 },
+
+    // ---- EVS PICTURE QUIZ (Emojis/Placeholders) ----
+    { id: 56, type: 'evs_picture', text: 'इनमें से फल कौन सा है?', hindi: 'इनमें से फल कौन सा है?', options: ['🍎', '🥦', '🚗', '🐶'], answer: '🍎', difficulty: 1 },
+    { id: 57, type: 'evs_picture', text: 'पानी में कौन रहता है?', hindi: 'पानी में कौन रहता है?', options: ['🦁', '🦅', '🐟', '🐱'], answer: '🐟', difficulty: 1 },
+    { id: 58, type: 'evs_picture', text: 'इनमें से वाहन कौन सा है?', hindi: 'इनमें से वाहन कौन सा है?', options: ['🌺', '🚲', '🍔', '📱'], answer: '🚲', difficulty: 1 },
+    { id: 59, type: 'evs_picture', text: 'हमारे शरीर का अंग कौन सा है?', hindi: 'हमारे शरीर का अंग कौन सा है?', options: ['✏️', '👀', '⚽', '🎸'], answer: '👀', difficulty: 1 },
+    { id: 60, type: 'evs_picture', text: 'आसमान में क्या चमकता है?', hindi: 'आसमान में क्या चमकता है?', options: ['☀️', '🌲', '🏠', '🍎'], answer: '☀️', difficulty: 1 },
 ];
 
 export function getQuestionById(id) {

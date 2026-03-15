@@ -18,6 +18,7 @@ export const levels = {
     13: { id: 13, name: 'मास्टर जोड़',         nameEn: 'Master Addition',   desc: 'सबसे कठिन जोड़',         type: 'addition',      difficulty: 3, questionIds: [10, 12, 13, 14],     starThresholds: [2, 3, 4] },
     14: { id: 14, name: 'सैकड़ा मान',         nameEn: 'Hundreds Place',    desc: 'सैकड़ा, दहाई, इकाई',     type: 'place_value',   difficulty: 3, questionIds: [45, 46, 41, 43],     starThresholds: [2, 3, 4] },
     15: { id: 15, name: 'फाइनल बॉस!',        nameEn: 'Final Challenge',   desc: 'मिक्स सवाल',             type: 'mixed',         difficulty: 3, questionIds: [14, 26, 35, 36, 55], starThresholds: [3, 4, 5] },
+    16: { id: 16, name: 'चित्र पहचानो',       nameEn: 'Picture Quiz',      desc: 'EVS चित्र क्विज़',         type: 'evs_picture',   difficulty: 1, questionIds: [56, 57, 58, 59, 60], starThresholds: [3, 4, 5] },
 };
 
 export const totalLevels = Object.keys(levels).length;
