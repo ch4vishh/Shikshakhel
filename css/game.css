@@ -1,0 +1,214 @@
+/* ========================================
+   GAME SCREEN
+   ======================================== */
+
+.game {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: radial-gradient(ellipse at 50% 0%, #2D1B69 0%, #0F0A1E 60%);
+    padding-bottom: 0;
+}
+
+/* Top bar */
+.game-topbar {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem 1rem 0.8rem;
+    animation: slideDown 0.3s ease;
+}
+
+.game-close {
+    width: 36px;
+    height: 36px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.game-close:active {
+    background: var(--bg-surface);
+}
+
+.game-progress-bar {
+    flex: 1;
+    height: 10px;
+    background: var(--bg-card);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.game-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 10px;
+    transition: width 0.4s ease;
+}
+
+.game-question-count {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+/* Character area */
+.game-character {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    animation: scaleIn 0.5s ease;
+}
+
+.character-emoji {
+    font-size: 4rem;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+}
+
+.character-speech {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.5rem;
+    margin-top: 0.8rem;
+    position: relative;
+    text-align: center;
+    max-width: 90%;
+    animation: slideUp 0.4s ease 0.2s both;
+}
+
+.character-speech::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid var(--glass-border);
+}
+
+/* Question */
+.game-question {
+    padding: 0 1.5rem;
+    text-align: center;
+    animation: slideUp 0.5s ease 0.1s both;
+}
+
+.question-text {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
+}
+
+.question-hint {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* Options grid */
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    padding: 1.2rem 1.5rem;
+    margin-top: auto;
+    animation: slideUp 0.5s ease 0.3s both;
+}
+
+.option-btn {
+    padding: 1.3rem 1rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 2px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.option-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(255,255,255,0.05));
+    pointer-events: none;
+}
+
+.option-btn:active {
+    transform: scale(0.95);
+}
+
+.option-btn.correct {
+    background: var(--success);
+    border-color: var(--success-light);
+    box-shadow: 0 0 20px var(--success-glow);
+    animation: pulse 0.3s ease;
+    color: white;
+}
+
+.option-btn.wrong {
+    background: var(--error);
+    border-color: var(--error-light);
+    box-shadow: 0 0 20px var(--error-glow);
+    animation: shake 0.4s ease;
+    color: white;
+}
+
+.option-btn.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* Timer bar */
+.timer-bar-container {
+    padding: 0 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.timer-bar {
+    height: 4px;
+    background: var(--bg-card);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.timer-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--success), var(--accent), var(--error));
+    border-radius: 4px;
+    transition: width 0.1s linear;
+}
+
+/* Feedback overlay */
+.feedback-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    pointer-events: none;
+}
+
+.feedback-emoji {
+    font-size: 5rem;
+    animation: starPop 0.5s ease;
+}

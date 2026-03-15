@@ -1,0 +1,93 @@
+/* ========================================
+   SPLASH SCREEN
+   ======================================== */
+
+.splash {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 50% 30%, #2D1B69 0%, #0F0A1E 70%);
+    position: relative;
+    overflow: hidden;
+}
+
+.splash::before {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(108, 60, 225, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    top: 20%;
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.splash-logo {
+    font-size: 5rem;
+    animation: bounce 1.5s ease infinite;
+    filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.5));
+    z-index: 1;
+}
+
+.splash-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-light), var(--accent), #FF6B35);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-top: 1rem;
+    z-index: 1;
+    text-align: center;
+}
+
+.splash-subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    z-index: 1;
+    text-align: center;
+    padding: 0 2rem;
+}
+
+.splash-loader {
+    margin-top: 2.5rem;
+    width: 60px;
+    height: 4px;
+    background: var(--bg-card-light);
+    border-radius: 4px;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.splash-loader-bar {
+    height: 100%;
+    width: 40%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 4px;
+    animation: shimmer 1.2s ease-in-out infinite;
+    background-size: 200% 100%;
+}
+
+/* Floating particles */
+.splash-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.splash-particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: float 4s ease-in-out infinite;
+}
+
+.splash-particle:nth-child(1) { width: 8px; height: 8px; background: var(--primary-light); top: 15%; left: 20%; animation-delay: 0s; }
+.splash-particle:nth-child(2) { width: 6px; height: 6px; background: var(--accent); top: 70%; left: 75%; animation-delay: 1s; }
+.splash-particle:nth-child(3) { width: 10px; height: 10px; background: var(--success); top: 40%; left: 85%; animation-delay: 0.5s; }
+.splash-particle:nth-child(4) { width: 5px; height: 5px; background: var(--accent-light); top: 80%; left: 15%; animation-delay: 1.5s; }
+.splash-particle:nth-child(5) { width: 7px; height: 7px; background: var(--primary); top: 25%; left: 60%; animation-delay: 2s; }

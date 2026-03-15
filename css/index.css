@@ -1,0 +1,206 @@
+/* ========================================
+   SHIKSHAKHEL – GLOBAL DESIGN SYSTEM
+   ======================================== */
+
+:root {
+    /* Primary palette */
+    --primary: #6C3CE1;
+    --primary-light: #8B5CF6;
+    --primary-dark: #5028A8;
+    --primary-glow: rgba(108, 60, 225, 0.3);
+
+    /* Accent / Secondary */
+    --accent: #F59E0B;
+    --accent-light: #FBBF24;
+    --accent-dark: #D97706;
+    --accent-glow: rgba(245, 158, 11, 0.3);
+
+    /* Success / Correct */
+    --success: #10B981;
+    --success-light: #34D399;
+    --success-glow: rgba(16, 185, 129, 0.25);
+
+    /* Error / Wrong */
+    --error: #EF4444;
+    --error-light: #F87171;
+    --error-glow: rgba(239, 68, 68, 0.25);
+
+    /* Backgrounds (dark mode) */
+    --bg-dark: #0F0A1E;
+    --bg-card: #1A1231;
+    --bg-card-light: #241B42;
+    --bg-surface: #2D2151;
+    --bg-gradient: linear-gradient(135deg, #0F0A1E 0%, #1A1231 50%, #2D1B69 100%);
+
+    /* Text */
+    --text-primary: #F8F5FF;
+    --text-secondary: #B8A9D4;
+    --text-muted: #7A6B99;
+
+    /* Borders */
+    --border-subtle: rgba(139, 92, 246, 0.15);
+    --border-glow: rgba(139, 92, 246, 0.4);
+
+    /* Glass */
+    --glass-bg: rgba(26, 18, 49, 0.7);
+    --glass-border: rgba(139, 92, 246, 0.2);
+
+    /* Spacing */
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --radius-full: 50%;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 20px var(--primary-glow);
+    --shadow-accent: 0 0 20px var(--accent-glow);
+
+    /* Font */
+    --font-family: 'Baloo 2', cursive, sans-serif;
+}
+
+/* ---- RESET ---- */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: var(--font-family);
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+#root {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: var(--bg-gradient);
+    overflow: hidden;
+}
+
+img, svg { max-width: 100%; display: block; }
+button { cursor: pointer; font-family: inherit; }
+input { font-family: inherit; }
+
+/* ---- SCROLLBAR ---- */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--primary-dark); border-radius: 4px; }
+
+/* ---- UTILITY CLASSES ---- */
+.page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 80px;
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease;
+}
+
+.page-no-nav {
+    padding-bottom: 0;
+}
+
+/* ---- ANIMATIONS ---- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.7); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 10px var(--primary-glow); }
+    50% { box-shadow: 0 0 25px var(--primary-glow), 0 0 50px rgba(108, 60, 225, 0.15); }
+}
+
+@keyframes confettiBurst {
+    0% { opacity: 1; transform: scale(0) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+    100% { opacity: 0; transform: scale(0.8) rotate(360deg) translateY(-50px); }
+}
+
+@keyframes starPop {
+    0% { transform: scale(0) rotate(-30deg); opacity: 0; }
+    60% { transform: scale(1.3) rotate(10deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes fireFlicker {
+    0%, 100% { transform: scale(1); filter: brightness(1); }
+    25% { transform: scale(1.05) rotate(-2deg); filter: brightness(1.1); }
+    50% { transform: scale(1.1); filter: brightness(1.2); }
+    75% { transform: scale(1.05) rotate(2deg); filter: brightness(1.1); }
+}
+
+@keyframes progressBar {
+    from { width: 0%; }
+}
+
+.anim-bounce { animation: bounce 0.6s ease; }
+.anim-shake { animation: shake 0.4s ease; }
+.anim-pulse { animation: pulse 1.5s ease infinite; }
+.anim-float { animation: float 3s ease-in-out infinite; }
+.anim-glow { animation: glow 2s ease-in-out infinite; }
