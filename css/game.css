@@ -1,6 +1,4 @@
-/* ========================================
-   GAME SCREEN — Polished & Immersive
-   ======================================== */
+
 
 .game {
     flex: 1;
@@ -13,7 +11,6 @@
     padding-bottom: 0;
 }
 
-/* ─── Top bar ─── */
 .game-topbar {
     display: flex; align-items: center;
     gap: 0.8rem;
